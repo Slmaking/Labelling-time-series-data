@@ -1,0 +1,24 @@
+-- Update the labels in your_table based on speed deviation thresholds
+UPDATE your_table
+SET labels =
+    CASE
+        WHEN speed_deviation >= threshold_high THEN 1
+        WHEN speed_deviation <= threshold_low THEN 2
+        ELSE 0
+    END;
+
+-- Create a temporary table to store the buffered windowed data
+CREATE TEMPORARY TABLE buffered_windowed_data AS
+SELECT
+    a.*  -- Include all columns from your_table
+FROM
+    your_table a
+WHERE
+    a.labels IN (1, 2)  -- Include rows with labels 1 or 2
+    AND EXISTS (
+        SELECT 1
+        FROM your_table b
+        WHERE
+            b.labels IN (1, 2)
+            AND b.id BETWEEN a.id - 30 AND a.id + 30  -- Adjust the window size as needed
+    );
