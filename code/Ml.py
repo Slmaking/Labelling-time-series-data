@@ -1,55 +1,120 @@
-
-#XGBoosted
- import xgboost as xgb
-
-# Calculate the ratio of negative to positive instances
-ratio = float(np.sum(y_train == 0)) / np.sum(y_train == 1)
-
-clf_xgb = xgb.XGBClassifier(scale_pos_weight=ratio)
-clf_xgb.fit(X_train, y_train)
-y_pred = clf_xgb.predict(X_test)
-
-print(classification_report(y_test, y_pred))
-
- from sklearn.model_selection import GridSearchCV
-
-param_grid = {
-    'max_depth': [3, 4, 5],
-    'learning_rate': [0.01, 0.05, 0.1],
-    'n_estimators': [50, 100, 200],
-    'scale_pos_weight': [ratio]
-}
-
-grid_search = GridSearchCV(clf_xgb, param_grid, scoring='f1', cv=5)
-grid_search.fit(X_train, y_train)
-best_clf = grid_search.best_estimator_
-
+# Importing necessary modules
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
-----------------------
+import numpy as np
+import matplotlib.pyplot as plt
 
-# Create a RandomForest classifier
+# --- Step 1: Initialize the Random Forest Classifier ---
 clf_rf = RandomForestClassifier()
 
-# Define the hyperparameters and their possible values
+# --- Step 2: Define the Hyperparameters ---
 param_grid = {
-    'n_estimators': [10, 50, 100, 200],  # Number of trees in the forest
-    'max_features': ['auto', 'sqrt', 'log2'],  # Number of features to consider at every split
-    'max_depth': [None, 10, 20, 30],  # Maximum depth of the tree
-    'min_samples_split': [2, 5, 10],  # Minimum number of samples required to split an internal node
-    'min_samples_leaf': [1, 2, 4],  # Minimum number of samples required at each leaf node
-    'bootstrap': [True, False],  # Method of selecting samples for training each tree
-    'class_weight': ['balanced', None]  # Weights associated with classes
+    'n_estimators': [10, 50, 100, 200],
+    'max_features': ['auto', 'sqrt', 'log2'],
+    'max_depth': [None, 10, 20, 30],
+    'min_samples_split': [2, 5, 10],
+    'min_samples_leaf': [1, 2, 4],
+    'bootstrap': [True, False],
+    'class_weight': ['balanced', None]
 }
 
-# Initialize GridSearchCV with the classifier and the hyperparameters
-grid_search = GridSearchCV(clf_rf, param_grid, scoring='f1', cv=5, verbose=2, n_jobs=-1)  # `n_jobs=-1` will use all processors to speed up the process
+# --- Step 3: Initialize Grid Search ---
+grid_search = GridSearchCV(
+    estimator=clf_rf,
+    param_grid=param_grid,
+    scoring='f1',
+    cv=5,
+    verbose=2,
+    n_jobs=-1
+)
 
-# Fit GridSearchCV
+# --- Step 4: Fit the Model to the Training Data ---
 grid_search.fit(X_train, y_train)
 
-# Retrieve the best classifier
+# --- Step 5: Retrieve the Best Estimator ---
 best_rf = grid_search.best_estimator_
+
+# --- Step 6: Plotting the results ---
+parameters = list(param_grid.keys())
+
+results = grid_search.cv_results_
+
+for param in parameters:
+    unique_vals = list(set(results[f'param_{param}']))
+    mean_scores = []
+
+    for val in unique_vals:
+        mask = (np.array(results[f'param_{param}'].data) == val)
+        mean_scores.append(np.mean(np.array(results['mean_test_score'])[mask]))
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(range(len(unique_vals)), mean_scores, marker='o')
+    plt.xticks(range(len(unique_vals)), unique_vals)
+    plt.title(f'F1 Score Trend based on {param}')
+    plt.xlabel(param)
+    plt.ylabel('Mean F1 Score')
+    plt.grid(True)
+    plt.show()
+
+
+
+----------
+#for XGBoost if the model is too slow use random search
+ # Importing necessary modules
+from xgboost import XGBClassifier
+from sklearn.model_selection import GridSearchCV
+import numpy as np
+import matplotlib.pyplot as plt
+
+# --- Step 1: Initialize the XGBoost Classifier ---
+xgb = XGBClassifier(use_label_encoder=False, eval_metric='mlogloss')
+
+# --- Step 2: Define the Hyperparameters ---
+param_grid = {
+    'n_estimators': [50, 100, 200],
+    'max_depth': [3, 6, 10],
+    'learning_rate': [0.001, 0.01, 0.1],
+    'subsample': [0.5, 0.8, 1.0],
+    'colsample_bytree': [0.5, 0.8, 1.0]
+}
+
+# --- Step 3: Initialize Grid Search ---
+grid_search = GridSearchCV(
+    estimator=xgb,
+    param_grid=param_grid,
+    scoring='f1',
+    cv=5,
+    verbose=2,
+    n_jobs=-1  # Use all processors
+)
+
+# --- Step 4: Fit the Model to the Training Data ---
+grid_search.fit(X_train, y_train)
+
+# --- Step 5: Retrieve the Best Estimator ---
+best_xgb = grid_search.best_estimator_
+
+# --- Step 6: Plotting the results ---
+parameters = list(param_grid.keys())
+
+results = grid_search.cv_results_
+
+for param in parameters:
+    unique_vals = list(set(results[f'param_{param}']))
+    mean_scores = []
+
+    for val in unique_vals:
+        mask = (np.array(results[f'param_{param}'].data) == val)
+        mean_scores.append(np.mean(np.array(results['mean_test_score'])[mask]))
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(range(len(unique_vals)), mean_scores, marker='o')
+    plt.xticks(range(len(unique_vals)), unique_vals)
+    plt.title(f'F1 Score Trend based on {param}')
+    plt.xlabel(param)
+    plt.ylabel('Mean F1 Score')
+    plt.grid(True)
+    plt.show()
 
 
  ----------
