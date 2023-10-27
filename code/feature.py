@@ -4,10 +4,12 @@ import shap
 explainer = shap.DeepExplainer(model, x_train)
 shap_values = explainer.shap_values(x_test)
 
-# Visualize the first prediction's explanation
-shap.initjs()
-shap.force_plot(explainer.expected_value[0], shap_values[0][0], x_test[0])
+shap.summary_plot(shap_values, x_train.values, plot_type="bar", class_names= class_names, feature_names = x_train.columns)
+shap.summary_plot(shap_values[1], x_train.values, feature_names = x_train.columns)
 
+֫# If we pass a numpy array instead of a data frame then we
+# need pass the feature names in separately
+shap.dependence_plot(0, shap_values[0], x_train.values, feature_names=x_train.columns)
 
 --------------
 
