@@ -11,7 +11,7 @@
     ymin=-5, % Adjusted for potential noise
     ymax=5,  % Adjusted for potential noise
     xmin=0,
-    xmax=25, % Extended time
+    xmax=27, % Extended time
     axis lines=middle,
     xtick=\empty,
     ],    
@@ -20,10 +20,16 @@
 \addplot[dashed, domain=0:25] {-2.5};
 
 % Signal with noise: Modified to be continuous and longer
-\addplot[color=black, domain=0:10, samples=200] {sin(deg(x)) + 0.2*rand}; % Regular signal with noise
-\addplot[color=red, domain=9.5:12.5, samples=200] {3*sin(deg(x)) + 0.3*rand}; % Signal above 2.5 threshold with noise labeled as Layer 1
+\addplot[color=black, domain=0:10, samples=400] {sin(deg(x)) + 0.2*rand}; % Regular signal with noise
+\addplot[color=red, domain=9.5:12.5, samples=400] {3*sin(deg(x)) + 0.3*rand}; % Signal above 2.5 threshold with noise labeled as Layer 1
 \addplot[color=black, domain=12.5:15.8, samples=200] {sin(deg(x)) + 0.1*rand}; % Regular signal with noise
-\addplot[color=blue, domain=16:19, samples=200] {-3*sin(deg(x)) + 0.6*rand}; % Signal below -2.5 threshold with noise labeled as Layer 2
+\addplot[color=blue, domain=16:18.6, samples=360] {-3*sin(deg(x)) + 0.6*rand}; % Signal below -2.5 threshold with noise labeled as Layer 2
+\addplot[color=black, domain=18.8:25, samples=400] {1.3*sin(deg(x)) + 0.3*rand}; % Regular signal with noise
+
+% Horizontal arrows with labels
+\draw[<->] (axis cs: 10,3.5) -- (axis cs: 13,3.5) node[midway,above] {Label 1};
+\draw[<->] (axis cs: 16,-4) -- (axis cs: 20,-4) node[midway,above] {Label 2};
+
 
 % Annotations
 \node at (axis cs: 11.5,3) {Acceleration};
