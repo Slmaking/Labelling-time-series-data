@@ -1,0 +1,35 @@
+\documentclass{article}
+\usepackage{pgfplots}
+
+\begin{document}
+
+\begin{tikzpicture}
+\begin{axis}[
+    xlabel={Time},
+    ylabel={$\Delta$ Deviation of speed},
+    yticklabel style={rotate=90},
+    ymin=-5, % Adjusted for potential noise
+    ymax=5,  % Adjusted for potential noise
+    xmin=0,
+    xmax=25, % Extended time
+    axis lines=middle,
+    xtick=\empty,
+    ],    
+% Dotted threshold lines
+\addplot[dashed, domain=0:25] {2.5};
+\addplot[dashed, domain=0:25] {-2.5};
+
+% Signal with noise: Modified to be continuous and longer
+\addplot[color=black, domain=0:10, samples=200] {sin(deg(x)) + 0.2*rand}; % Regular signal with noise
+\addplot[color=red, domain=9.5:12.5, samples=200] {3*sin(deg(x)) + 0.3*rand}; % Signal above 2.5 threshold with noise labeled as Layer 1
+\addplot[color=black, domain=12.5:15.8, samples=200] {sin(deg(x)) + 0.1*rand}; % Regular signal with noise
+\addplot[color=blue, domain=16:19, samples=200] {-3*sin(deg(x)) + 0.6*rand}; % Signal below -2.5 threshold with noise labeled as Layer 2
+
+% Annotations
+\node at (axis cs: 11.5,3) {Acceleration};
+\node at (axis cs: 18,-3) {Braking};
+
+\end{axis}
+\end{tikzpicture}
+
+\end{document}
