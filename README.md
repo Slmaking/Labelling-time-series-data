@@ -8,3 +8,8 @@ After generating these labels, we plan to employ a supervised machine learning a
 Once the model is trained, we will evaluate its performance by testing it on new data. We want to see how accurately the other features in our dataset can predict whether a braking event occurred based on the patterns and information in the data.
 
 In a sense, our goal is to use the speed data from GNSS sensors to mark when braking events happen, and then see how well our machine learning model can use other information (like accelerometer and Gyroscope) to predict these braking events.
+
+## Machine learning
+
+In the realm of traffic safety, braking detection, classification stands as the first step to identify hazardous events. By efficiently categorizing data, predicting potential hazards, and measuring the effectiveness of our predictions using the aforementioned metrics. Furthermore, the integration of advanced algorithms and sensor technologies enhances the precision of these predictions, thereby paving the way for more proactive and adaptive safety measures in vehicular systems.
+
