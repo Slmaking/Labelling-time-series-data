@@ -32,6 +32,39 @@ Certainly, if you're looking for alternative methods to interpret and understand
 
 When considering these methods, remember that neural networks are highly complex and non-linear, so any interpretability method will be an approximation. The right method often depends on the specific context and what you're most comfortable with.
 ''''
+
+import shap
+
+explainer = shap.Explainer(model)
+shap_values = explainer.shap_values(X_test)
+
+shap.summary_plot(shap_values, X_test)
+
+shap.summary_plot(shap_values[0], X_test) # for speecefic label
+
+shap.plots.force(explainer.expected_value[1], shap_values[1][6, :], X_test.iloc[6, :],matplotlib = True)
+
+shap.decision_plot(explainer.expected_value[1], shap_values[1], X_test.columns)
+shap.summary_plot(shap_values, X_display, plot_type="bar")
+for name in X_train.columns:
+    shap.dependence_plot(name, shap_values, X, display_features=X_display)
+------------
+** Classic feature attributions
+
+xgboost.plot_importance(model)
+pl.title("xgboost.plot_importance(model)")
+pl.show()
+
+
+
+
+
+
+
+
+
+
+-------------
 import lime
 from lime import lime_tabular
 import numpy as np
