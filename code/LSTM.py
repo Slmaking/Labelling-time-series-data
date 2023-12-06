@@ -1,3 +1,48 @@
+import numpy as np
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, Dropout
+from tensorflow.keras.utils import to_categorical
+from sklearn.utils.class_weight import compute_class_weight
+from sklearn.metrics import classification_report, confusion_matrix
+import pandas as pd
+
+# Assuming X_train, y_train, X_test, y_test are your training and test data and labels
+
+# Normalize or standardize X_train here if needed
+
+# Calculate class weights
+class_weights = compute_class_weight('balanced', classes=np.unique(y_train), y=y_train)
+class_weight_dict = dict(enumerate(class_weights))
+
+# Convert labels to categorical (one-hot encoding)
+y_train_categorical = to_categorical(y_train)
+
+# Build the LSTM model
+model = Sequential()
+model.add(LSTM(units=50, return_sequences=False, input_shape=(X_train.shape[1], X_train.shape[2])))
+model.add(Dropout(0.5))  # Adding Dropout
+model.add(Dense(units=y_train_categorical.shape[1], activation='softmax'))
+
+# Compile the model
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Train the model
+model.fit(X_train, y_train_categorical, epochs=10, batch_size=64, class_weight=class_weight_dict, validation_split=0.2)
+
+# Evaluate the model
+y_test_categorical = to_categorical(y_test)
+evaluation = model.evaluate(X_test, y_test_categorical)
+predictions = model.predict(X_test)
+
+# Print classification report
+print(classification_report(np.argmax(y_test_categorical, axis=1), np.argmax(predictions, axis=1)))
+
+# Confusion Matrix
+cm = confusion_matrix(np.argmax(y_test_categorical, axis=1), np.argmax(predictions, axis=1))
+cm_df = pd.DataFrame(cm, index=["Normal", "Acceleration", "Braking"], columns=["Normal", "Acceleration", "Braking"])
+print(cm_df)
+
+
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 from tensorflow.keras.utils import to_categorical
@@ -59,13 +104,7 @@ print(f"Best parameters: {best_params}")
 
 
 
-
-import matplotlib.pyplot as plt
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense
-from tensorflow.keras.utils import to_categorical
-from sklearn.utils.class_weight import compute_class_weight
-import numpy as np
+#Hyperparameter tunning
 
 # Sample hyperparameters for demonstration
 lstm_units_options = [50, 100]
