@@ -166,4 +166,28 @@ for lstm_units in lstm_units_options:
         plt.tight_layout()
         plt.show()
 
+# Expalinable AI
+
+
+    explainer = shap.GradientExplainer(model, X_train)
+    shap_values = explainer.shap_values(X_train)
+
+# Use the training data for deep explainer => can use fewer instances
+explainer = shap.DeepExplainer(model, X_train)
+# explain the the testing instances (can use fewer shap.summary_plot(shap_values_2D, x_test_2d)
+instanaces)
+# explaining each prediction requires 2 * background dataset size runs
+shap_values = explainer.shap_values(X_test)
+# init the JS visualization code
+shap.initjs()
+################# Plot AVERAGE shap values for ALL observations  #####################
+## Consider average (+ is different from -)
+shap_average_value = shap_values[0].mean(axis=0)
+
+x_average_value = pd.DataFrame(data=X_test.mean(axis=0), columns = features)
+shap.force_plot(explainer.expected_value[0], shap_average_value, x_average_value)
+
+shap.summary_plot(shap_values_2D, x_test_2d)
+
+
 
