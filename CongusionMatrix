@@ -1,0 +1,40 @@
+\documentclass[english]{article}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage{babel}
+\usepackage[table]{xcolor}
+\usepackage{collcell}
+\usepackage{hhline}
+\usepackage{pgf}
+\usepackage{multirow}
+
+\def\colorModel{hsb} %You can use rgb or hsb
+
+\newcommand\ColCell[1]{
+  \pgfmathparse{#1<50?1:0}  %Threshold for changing the font color into the cells
+    \ifnum\pgfmathresult=0\relax\color{white}\fi
+  \pgfmathsetmacro\compA{0}      %Component R or H
+  \pgfmathsetmacro\compB{#1/100} %Component G or S
+  \pgfmathsetmacro\compC{1}      %Component B or B
+  \edef\x{\noexpand\centering\noexpand\cellcolor[\colorModel]{\compA,\compB,\compC}}\x #1
+  } 
+\newcolumntype{E}{>{\collectcell\ColCell}m{0.4cm}<{\endcollectcell}}  %Cell width
+\newcommand*\rot{\rotatebox{90}}
+
+\begin{document}
+\newcommand\items{3}   %Number of classes
+\arrayrulecolor{white} %Table line colors
+\noindent\begin{tabular}{cc*{\items}{|E}|}
+\multicolumn{1}{c}{} &\multicolumn{1}{c}{} &\multicolumn{\items}{c}{Predicted} \\ \hhline{~*\items{|-}|}
+\multicolumn{1}{c}{} & 
+\multicolumn{1}{c}{} & 
+\multicolumn{1}{c}{\rot{Class A}} & 
+\multicolumn{1}{c}{\rot{Class B}} & 
+\multicolumn{1}{c}{\rot{Class C}} \\ \hhline{~*\items{|-}|}
+\multirow{\items}{*}{\rotatebox{90}{Actual}} 
+&Class A  & TP   & 0  & 10   \\ \hhline{~*\items{|-}|}
+&Class B  & 10   & TP  & 10   \\ \hhline{~*\items{|-}|}
+&Class C  & 30   & 0   & TP   \\ \hhline{~*\items{|-}|}
+\end{tabular}
+
+\end{document}
