@@ -38,3 +38,33 @@
 \end{tabular}
 
 \end{document}
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
+\documentclass{article}
+\usepackage{array}
+\usepackage{multirow}
+
+\newcommand\MyBox[2]{
+  \fbox{\lower0.75cm
+    \vbox to 1.7cm{\vfil
+      \hbox to 1.7cm{\hfil\parbox{1.4cm}{#1\\#2}\hfil}
+      \vfil}%
+  }%
+}
+
+\begin{document}
+
+\noindent
+\renewcommand\arraystretch{1.5}
+\setlength\tabcolsep{0pt}
+\begin{tabular}{c >{\bfseries}r @{\hspace{0.7em}}c @{\hspace{0.4em}}c @{\hspace{0.7em}}l}
+  \multirow{10}{*}{\parbox{1.1cm}{\bfseries\raggedleft Actual\\ class}} & 
+    & \multicolumn{2}{c}{\bfseries Prediction class} & \\
+  & & \bfseries P & \bfseries N & \bfseries  \\
+  & P & \MyBox{True}{Positive} & \MyBox{False}{Negative} &  \\[2.4em]
+  & N & \MyBox{False}{Positive} & \MyBox{True}{Negative} & \\
+  &  &  &  &
+\end{tabular}
+
+\end{document}
